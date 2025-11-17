@@ -98,7 +98,7 @@ function TaskForm({ onCreate, isSubmitting }) {
           <input
             name="assignedTo"
             value={task.assignedTo}
-            placeholder="e.g. alex@example.com"
+            placeholder="e.g. abc123@nau.edu"
             onChange={handleChange}
             disabled={isSubmitting}
           />
