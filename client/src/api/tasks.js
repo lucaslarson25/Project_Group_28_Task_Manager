@@ -13,8 +13,17 @@ const parseResponse = async (response) => {
   return response.json();
 };
 
-export const fetchTasks = async () => {
-  const response = await fetch(`${API_BASE_URL}/tasks`);
+export const fetchTasks = async (filters = {}, sort) => {
+  const params = new URLSearchParams();
+  if (filters.status) params.set('status', filters.status);
+  if (filters.priority) params.set('priority', filters.priority);
+  if (filters.assignedTo) params.set('assigned_to', filters.assignedTo);
+  if (filters.dueBefore) params.set('due_before', filters.dueBefore);
+  if (filters.dueAfter) params.set('due_after', filters.dueAfter);
+  if (sort) params.set('sort', sort);
+
+  const query = params.toString();
+  const response = await fetch(`${API_BASE_URL}/tasks${query ? `?${query}` : ''}`);
   return parseResponse(response);
 };
 
@@ -33,6 +42,16 @@ export const updateTask = async (id, updates) => {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(updates),
+  });
+
+  return parseResponse(response);
+};
+
+export const assignTask = async (id, payload) => {
+  const response = await fetch(`${API_BASE_URL}/tasks/${id}/assign`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   });
 
   return parseResponse(response);

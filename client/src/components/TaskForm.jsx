@@ -6,10 +6,10 @@ const createDefaultTask = () => ({
   dueDate: '',
   priority: 'normal',
   status: 'open',
-  assignedTo: '',
+  assignedUserId: '',
 });
 
-function TaskForm({ onCreate, isSubmitting }) {
+function TaskForm({ onCreate, isSubmitting, users }) {
   const [task, setTask] = useState(createDefaultTask);
   const [formError, setFormError] = useState('');
 
@@ -28,7 +28,11 @@ function TaskForm({ onCreate, isSubmitting }) {
     }
 
     try {
-      await onCreate(task);
+      const payload = {
+        ...task,
+        assignedUserId: task.assignedUserId ? Number(task.assignedUserId) : null,
+      };
+      await onCreate(payload);
       setTask(createDefaultTask());
     } catch (error) {
       setFormError(error.message);
@@ -94,14 +98,20 @@ function TaskForm({ onCreate, isSubmitting }) {
         </label>
 
         <label>
-          Assigned to
-          <input
-            name="assignedTo"
-            value={task.assignedTo}
-            placeholder="e.g. abc123@nau.edu"
+          Assigned user
+          <select
+            name="assignedUserId"
+            value={task.assignedUserId}
             onChange={handleChange}
             disabled={isSubmitting}
-          />
+          >
+            <option value="">Unassigned</option>
+            {users?.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name}
+              </option>
+            ))}
+          </select>
         </label>
       </div>
 

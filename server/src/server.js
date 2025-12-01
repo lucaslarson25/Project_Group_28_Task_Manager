@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const tasksRouter = require('./routes/tasks');
+const analyticsRouter = require('./routes/analytics');
+const usersRouter = require('./routes/users');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -20,6 +22,8 @@ app.get('/api/health', (_, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+app.use('/api/users', usersRouter);
+app.use('/api/analytics', analyticsRouter);
 app.use('/api/tasks', tasksRouter);
 
 app.use((err, req, res, next) => {
